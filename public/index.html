@@ -29,6 +29,14 @@
         <label>Age:</label>
         <input name="AGE" type="number" required />
 
+        <!-- read‑only declaration (unchanged) -->
+        <label>Declaration (read‑only):</label>
+        <textarea class="declaration" readonly tabindex="-1">
+1. This statement made by me accurately sets out the evidence that I would be prepared, if necessary, to give in court as a witness. The statement is true to the best of my knowledge and belief and I make it knowing that, if it is tendered in evidence, I will be liable to prosecution if I have wilfully stated in it anything that I know to be false or do not believe to be true.
+
+2. I have not used generative Artificial Intelligence (AI) in the making of this statement.
+        </textarea>
+
         <label>Statement (new line = new dot‑point):</label>
         <textarea name="PARAGRAPH" required></textarea>
 
@@ -40,10 +48,28 @@
         <canvas id="policePad"></canvas>
         <button type="button" class="btn-clear" onclick="clearPad(pPad)">Clear Police</button>
 
+        <!-- ── NEW OFFICER DETAILS ────────────────────────────────────────── -->
+        <div style="display:flex; gap:1rem; margin-top:1.25rem;">
+          <div style="flex:1;">
+            <label>Officer Name:</label>
+            <input name="polName" type="text" required />
+          </div>
+          <div style="flex:0 0 150px;">
+            <label>Reg. No.:</label>
+            <input name="polRego" type="text" required />
+          </div>
+        </div>
+        <!-- ───────────────────────────────────────────────────────────────── -->
+
         <button type="submit" class="btn-generate">Generate Statement DOCX</button>
       </form>
     </div>
   </main>
+
+  <footer class="wip-note">
+    Work‑in‑progress build.  Email suggestions to
+    <a href="mailto:59302@police.nsw.gov.au">59302@police.nsw.gov.au</a>
+  </footer>
 
   <script src="script.js"></script>
 </body>

@@ -126,3 +126,22 @@ button {
   }
   h1 { font-size: 1.15rem; }
 }
+
+/* small, italic notice */
+.wip-note {
+  text-align: center;
+  font-size: 0.8rem;   /* small */
+  font-style: italic;  /* italic */
+  color: #666;
+  padding: 0.75rem 0 1.25rem;
+}
+
+/* read‑only declaration box (same footprint as textarea) */
+textarea.declaration {
+  min-height: 160px;
+  resize: vertical;         /* keep same behaviour as Statement box */
+  background: var(--nsw-grey);
+  color: #333;
+  cursor: default;
+  overflow-y: auto;
+}

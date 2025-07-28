@@ -1,10 +1,6 @@
-// index.js  –  P190A Witness‑Statement generator (final list‑fix)
-// ------------------------------------------------------------------
-//  • Builds a true numbered list (one paragraph per item)
-//  • Embeds hand‑drawn signatures into {%policeSignature}/{%witnessSignature}
-//  • Streams a clean DOCX back to the browser
+// index.js  –  NSW Witness‑Statement generator (polName / polRego added)
 
-// ── dependencies ────────────────────────────────────────────────────────────
+// ── dependencies ───────────────────────────────────────────────
 const fs             = require('fs');
 const path           = require('path');
 const express        = require('express');
@@ -13,58 +9,56 @@ const PizZip         = require('pizzip');
 const Docxtemplater  = require('docxtemplater');
 const ImageModule    = require('docxtemplater-image-module-free');
 
-// ── basic server setup ──────────────────────────────────────────────────────
-const app = express();
-app.use(bodyParser.json({ limit: '10mb' }));   // signatures arrive as base64 data URLs
-app.use(express.static('public'));             // serves index.html & script.js
+// ── express setup ──────────────────────────────────────────────
+const app  = express();
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(express.static('public'));
 
-// ── /generate endpoint ──────────────────────────────────────────────────────
+// ── /generate endpoint ─────────────────────────────────────────
 app.post('/generate', (req, res) => {
   const {
     MATTER, LOCATION, DATE, NAME, AGE,
-    PARAGRAPH,                // textarea content with \n line breaks
-    policeSignature,          // data:image/png;base64,……
-    witnessSignature          // data:image/png;base64,……
+    polName, polRego,                       // ← NEW FIELDS
+    PARAGRAPH,
+    policeSignature, witnessSignature
   } = req.body;
 
-  // 1️⃣  Build an *array* of items (no manual numbers – Word handles numbering)
+  // build array for numbered list
   const paragraphArray = PARAGRAPH
-    .split(/\r?\n/)                  // split on CRLF or LF
+    .split(/\r?\n/)
     .filter(line => line.trim() !== '')
-    .map(text => ({ value: text.trim() }));   // no numbering here
+    .map(text => ({ value: text.trim() }));
 
-  // 2️⃣  Strip the data‑URL prefixes so we keep only raw base‑64
+  // strip data‑URL prefix from signatures
   const base64Police  = (policeSignature  || '').split(',')[1] || '';
   const base64Witness = (witnessSignature || '').split(',')[1] || '';
 
-  // 3️⃣  Load the DOCX template
+  // load template
   const templatePath = path.resolve(__dirname, 'templates', 'p190A-Template.docx');
   const content      = fs.readFileSync(templatePath);
   const zip          = new PizZip(content);
 
-  // 4️⃣  Configure the free image module (expects base‑64 strings)
+  // image module
   const imageModule = new ImageModule({
     fileType : 'docx',
-    centered : false,                       // change to true if you prefer centred images
-    getImage : base64 => Buffer.from(base64, 'base64'),
-    getSize  : () => [180, 70]              // width, height in px – tweak once to fit footer
+    centered : false,
+    getImage : b64 => Buffer.from(b64, 'base64'),
+    getSize  : () => [180, 70]
   });
 
-  // 5️⃣  Create the document & inject data
   const doc = new Docxtemplater(zip, { modules: [imageModule] });
 
+  // inject data
   doc.setData({
-    MATTER,
-    LOCATION,
-    DATE,
-    NAME,
-    AGE,
-    PARAGRAPH       : paragraphArray,   // ← array to feed the {#PARAGRAPH} loop
+    MATTER, LOCATION, DATE, NAME, AGE,
+    PARAGRAPH       : paragraphArray,
     policeSignature : base64Police,
-    witnessSignature: base64Witness
+    witnessSignature: base64Witness,
+    polName,                              // ← NEW
+    polRego                               // ← NEW
   });
 
-  // 6️⃣  Render and stream back
+  // render & send
   try {
     doc.render();
     const buffer   = doc.getZip().generate({ type: 'nodebuffer' });
@@ -77,13 +71,12 @@ app.post('/generate', (req, res) => {
     });
     res.send(buffer);
   } catch (err) {
-    // If something inside the template is wrong, show the error plainly
     res.status(400).send(`Template error:\n${err.message || err}`);
   }
 });
 
-// ── start the server ────────────────────────────────────────────────────────
-const PORT = 3000;
+// ── start server (Render‑friendly) ─────────────────────────────
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
-  console.log(`Server running on http://localhost:${PORT}`)
+  console.log(`Server running – listening on port ${PORT}`)
 );
