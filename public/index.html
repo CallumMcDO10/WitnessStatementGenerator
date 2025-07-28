@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NSW Police – Witness Statement (P190A)</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>NSW Police Force – Witness Statement (P190A)</h1>
+  </header>
+
+  <main>
+    <div class="card">
+      <form id="statementForm">
+        <label>In the matter of:</label>
+        <input name="MATTER" type="text" required />
+
+        <label>Place (Location):</label>
+        <input name="LOCATION" type="text" required />
+
+        <label>Date:</label>
+        <input name="DATE" type="date" required />
+
+        <label>Name:</label>
+        <input name="NAME" type="text" required />
+
+        <label>Age:</label>
+        <input name="AGE" type="number" required />
+
+        <label>Statement (new line = new dot‑point):</label>
+        <textarea name="PARAGRAPH" required></textarea>
+
+        <label>Witness Signature (draw):</label>
+        <canvas id="witnessPad"></canvas>
+        <button type="button" class="btn-clear" onclick="clearPad(wPad)">Clear Witness</button>
+
+        <label style="margin-top:1.5rem;">Police Signature (draw):</label>
+        <canvas id="policePad"></canvas>
+        <button type="button" class="btn-clear" onclick="clearPad(pPad)">Clear Police</button>
+
+        <button type="submit" class="btn-generate">Generate Statement DOCX</button>
+      </form>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "docxtemplater": "^3.65.2",
+    "docxtemplater-image-module-free": "^1.1.1",
+    "express": "^5.1.0",
+    "pizzip": "^3.2.0"
+  }
+}
